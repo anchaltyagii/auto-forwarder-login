@@ -1,0 +1,11 @@
+@import './styles/colors.scss';
+
+.main-container {
+  width: 100vw;
+  height: 100vh;
+}
+
+.error-msg {
+  color: $errorRed;
+  font-size: 11px;
+}
