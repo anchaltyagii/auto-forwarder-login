@@ -1,6 +1,6 @@
 // Validations for mobile number
 export const mobileNumberValidation = (mob: any) => {
-  const pattern = /^+(?:[0-9] ?){6,14}[0-9]$/;
+  const pattern = /^\+(?:[0-9] ?){6,14}[0-9]$/;
   return pattern.test(String(mob));
 };
 
