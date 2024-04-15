@@ -4,12 +4,15 @@ import Layout from '../../components/Layout.tsx/Layout';
 import {
   isPasswordValid,
   mobileNumberValidation,
+  removeWhitespaceAndHyphens,
 } from '../../Constants/Validations';
 import { Strings } from '../../Constants/Strings';
 import PhoneInput from 'react-phone-input-2';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import MuiPhoneNumber from 'material-ui-phone-number';
 import './SecondScreen.scss';
+import axios from 'axios';
+import { baseUrl } from '../../Services/APIConstant';
 
 const SecondScreen = ({
   mobNo,
@@ -17,19 +20,42 @@ const SecondScreen = ({
   setThirdScreen,
   setSecondScreen,
   setFirstScreen,
+  setFourthScreen,
 }: any) => {
   const { mobileNoLabel, enterCodeLabel, codeErrMsg } = Strings;
   const [codeErr, setCodeErr] = useState(false);
   const [code, SetCode] = useState('');
-  const [codeDisabled, setCodeDisabled] = useState(false);
 
   const handleChange = () => {};
+  const token = localStorage.getItem('token');
 
   const handleCodeSubmit = () => {
-    setCodeDisabled(true);
+    try {
+      axios
+        .post(`${baseUrl}/login_with_code`, {
+          phone: removeWhitespaceAndHyphens(mobNo),
+          code: code,
+          token: token,
+        })
+        .then((res: any) => {
+          // console.log('res', res);
+          if (res?.success === true) {
+            if (res?.fa_required === true) {
+              setFirstScreen(false);
+              setSecondScreen(false);
+              setThirdScreen(true);
+            } else {
+              setSecondScreen(false);
+              setFourthScreen(true);
+            }
+          }
+        });
+    } catch (err) {
+      console.log('error', err);
+    } finally {
+    }
     setThirdScreen(true);
     setSecondScreen(false);
-    setFirstScreen(false);
   };
   return (
     <>

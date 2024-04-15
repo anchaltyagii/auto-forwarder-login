@@ -9,4 +9,5 @@ export const Strings = {
   passwordLabel:
     'Your Telegram account uses a 2FA password to login. Please enter the password: What is 2FA password? This is how you set a password in Telegram account:',
   passwordErrorMsg: 'Please enter a valid password',
+  successPasswordMsg: `You have successfully logged in to AageBot's @auto_forwarder_bot. You are being redirected to the bot. Please click the button below to do it now`,
 };

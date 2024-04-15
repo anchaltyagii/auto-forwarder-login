@@ -1,15 +1,32 @@
-import React from 'react';
-import FirstScreen from './Screens/FirstScreen/FirstScreen';
-import SecondScreen from './Screens/SecondScreen/SecondScreen';
-import { Routes, Route } from 'react-router-dom';
-import "./App.scss";
+import React, { useEffect } from 'react';
+import Screens from './Screens/index';
+import {
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+  useSearchParams,
+} from 'react-router-dom';
+import './App.scss';
 
 function App() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const [searchParams] = useSearchParams();
+  const token: any = searchParams.get('token');
+
+  localStorage.setItem('token', token);
+
+  useEffect(() => {
+    if (location.pathname === '/') {
+      navigate('/authorize');
+    }
+  }, []);
   return (
     <div className='main-container'>
       <Routes>
-        <Route path='/' element={<FirstScreen />} />
-        <Route path='/enter-code' element={<SecondScreen />} />
+        <Route path='/authorize' element={<Screens />} />
       </Routes>
     </div>
   );

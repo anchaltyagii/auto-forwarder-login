@@ -16,3 +16,7 @@ export const whiteSpaceValid = (name: any) => {
   const spac_reg = /^[^\s].*/;
   return spac_reg.test(String(name));
 };
+
+export function removeWhitespaceAndHyphens(inputString: string) {
+  return inputString.replace(/[\s-]/g, '');
+}

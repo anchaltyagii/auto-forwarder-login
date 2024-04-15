@@ -1,0 +1,38 @@
+@import '../styles/colors.scss';
+
+.mobile_no_field_container {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    margin: 10px 0px;
+    color: $labelGrey;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  input:disabled {
+    cursor: not-allowed;
+    background-color: #e9e5e5;
+  }
+}
+
+.btn-container {
+  margin: 58px 0px 25px 0px;
+  width: 100%;
+
+  button {
+    height: 48px;
+    border-radius: 6px;
+  }
+
+  .login-code-btn {
+    width: 100%;
+    background-color: $primarySalmon;
+    text-transform: none;
+  }
+
+  .login-code-btn:hover {
+    background-color: $primarySalmon;
+  }
+}
