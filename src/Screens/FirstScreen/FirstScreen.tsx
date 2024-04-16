@@ -10,6 +10,7 @@ const FirstScreen = ({
   handleMobile,
   inputDisabled,
   mobNoErr,
+  isLoading,
 }: any) => {
   const { mobileNoLabel, mobileNoErrMsg } = Strings;
 
@@ -28,7 +29,7 @@ const FirstScreen = ({
           value={mobNo}
           size='small'
           error={mobNoErr}
-          type='tel'
+          type='text'
           autoComplete='off'
           disabled={inputDisabled}
         />
@@ -42,7 +43,7 @@ const FirstScreen = ({
           disabled={mobNo === ''}
           onClick={handleMobile}
         >
-          Send Login Code
+          {isLoading ? 'Loading...' : 'Send Login Code'}
         </Button>
       </div>
     </div>

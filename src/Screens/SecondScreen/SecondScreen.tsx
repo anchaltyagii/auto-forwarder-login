@@ -29,18 +29,18 @@ const SecondScreen = ({
   const handleChange = () => {};
   const token = localStorage.getItem('token');
 
-  const handleCodeSubmit = () => {
+  const handleCodeSubmit = async () => {
     try {
       axios
-        .post(`${baseUrl}/login_with_code`, {
+        .post(`${baseUrl}/login_with_code/`, {
           phone: removeWhitespaceAndHyphens(mobNo),
           code: code,
           token: token,
         })
         .then((res: any) => {
-          // console.log('res', res);
-          if (res?.success === true) {
-            if (res?.fa_required === true) {
+          console.log('res login code', res.response.data.success);
+          if (res.response.data.success === true) {
+            if (res.response.data.two_fa_required === true) {
               setFirstScreen(false);
               setSecondScreen(false);
               setThirdScreen(true);
@@ -54,8 +54,6 @@ const SecondScreen = ({
       console.log('error', err);
     } finally {
     }
-    setThirdScreen(true);
-    setSecondScreen(false);
   };
   return (
     <>

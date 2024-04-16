@@ -13,6 +13,8 @@ import {
 import axios from 'axios';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { baseUrl } from '../Services/APIConstant';
+import TokenExpired from '../components/TokenExpired/TokenExpired';
+import Alert from '@mui/material/Alert';
 
 const Index = () => {
   const [mobNo, setMobNo] = useState('');
@@ -22,33 +24,48 @@ const Index = () => {
   const [secondScreen, setSecondScreen] = useState(false);
   const [thirdScreen, setThirdScreen] = useState(false);
   const [fourthScreen, setFourthScreen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const token = localStorage.getItem('token');
 
-  const handleMobile = () => {
+  const handleMobile = async () => {
     if (!mobileNumberValidation(removeWhitespaceAndHyphens(mobNo))) {
       setMobNoErr(true);
     } else {
-      setInputDisabled(true);
-      setFirstScreen(false);
-      setSecondScreen(true);
+      // setInputDisabled(true);
+      // setFirstScreen(false);
+      // setSecondScreen(true);
       try {
-        axios
-          .post(`${baseUrl}/send_login_code`, {
-            phone: removeWhitespaceAndHyphens(mobNo),
-            token: token,
-          })
+        setIsLoading(true);
+        const response = await axios
+          .post(
+            `${baseUrl}/send_login_code/`,
+            {
+              phone: removeWhitespaceAndHyphens(mobNo),
+              token: token,
+            },
+            {
+              headers: {
+                'Access-Control-Allow-Origin': '*',
+              },
+            }
+          )
           .then((res: any) => {
-            // console.log('res', res);
-            if (res?.success === true) {
+            // console.log('res data mobile', res.response.data.success);
+            if (res.response.data.success === 200) {
               setInputDisabled(true);
               setFirstScreen(false);
               setSecondScreen(true);
+            } else {
+              console.log('Error', res.response.data.success);
             }
           });
+        console.log('response', response);
       } catch (err) {
         console.log('error', err);
+        alert(err);
       } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -63,6 +80,7 @@ const Index = () => {
             handleMobile={handleMobile}
             inputDisabled={inputDisabled}
             mobNoErr={mobNoErr}
+            isLoading={isLoading}
           />
         )}
 
@@ -89,6 +107,8 @@ const Index = () => {
         )}
 
         {fourthScreen && <FourthScreen />}
+
+        {/* {<TokenExpired />} */}
       </Layout>
     </>
   );
