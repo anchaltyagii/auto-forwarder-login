@@ -25,34 +25,36 @@ const SecondScreen = ({
   const { mobileNoLabel, enterCodeLabel, codeErrMsg } = Strings;
   const [codeErr, setCodeErr] = useState(false);
   const [code, SetCode] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = () => {};
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('aageToken');
 
   const handleCodeSubmit = async () => {
     try {
-      axios
-        .post(`${baseUrl}/login_with_code/`, {
-          phone: removeWhitespaceAndHyphens(mobNo),
-          code: code,
-          token: token,
-        })
-        .then((res: any) => {
-          console.log('res login code', res.response.data.success);
-          if (res.response.data.success === true) {
-            if (res.response.data.two_fa_required === true) {
-              setFirstScreen(false);
-              setSecondScreen(false);
-              setThirdScreen(true);
-            } else {
-              setSecondScreen(false);
-              setFourthScreen(true);
-            }
-          }
-        });
+      setIsLoading(true);
+      const response = await axios.post(`${baseUrl}/login_with_code/`, {
+        phone: removeWhitespaceAndHyphens(mobNo),
+        code: code,
+        token: token,
+      });
+      if (response.data.success === true) {
+        if (response.data.two_fa_required === true) {
+          setFirstScreen(false);
+          setSecondScreen(false);
+          setThirdScreen(true);
+        } else {
+          setSecondScreen(false);
+          setFourthScreen(true);
+        }
+        setCodeErr(false);
+      } else if (response.data.success === false) {
+        setCodeErr(true);
+      }
     } catch (err) {
       console.log('error', err);
     } finally {
+      setIsLoading(false);
     }
   };
   return (
@@ -91,7 +93,7 @@ const SecondScreen = ({
             disabled={code.length !== 5}
             onClick={handleCodeSubmit}
           >
-            Login with code
+            {isLoading ? 'Loading...' : 'Login with code'}
           </Button>
         </div>
       </div>

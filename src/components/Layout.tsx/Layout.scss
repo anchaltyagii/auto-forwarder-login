@@ -11,7 +11,9 @@
   .layout_children_container {
     .icon_heading_container {
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       img {
         height: 55px;
         width: 70px;

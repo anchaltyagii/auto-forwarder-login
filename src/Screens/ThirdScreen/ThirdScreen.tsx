@@ -1,47 +1,47 @@
-import { Button, TextField } from '@mui/material';
 import React, { useState } from 'react';
+import { Button, IconButton, InputAdornment, TextField } from '@mui/material';
 import { Strings } from '../../Constants/Strings';
 import MuiPhoneNumber from 'material-ui-phone-number';
 import axios from 'axios';
 import { baseUrl } from '../../Services/APIConstant';
 import { removeWhitespaceAndHyphens } from '../../Constants/Validations';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 const ThirdScreen = ({
   mobNo,
   inputDisabled,
-  setFirstScreen,
-  setSecondScreen,
   setThirdScreen,
   setFourthScreen,
 }: any) => {
   const { mobileNoLabel, passwordLabel, passwordErrorMsg } = Strings;
   const [password, setPassword] = useState('');
   const [passwordErrMsg, setPasswordErrMsg] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('aageToken');
 
   const handleChange = () => {};
 
-  const handlePassword = () => {
-    setThirdScreen(false);
-    setFourthScreen(true);
+  const handlePassword = async () => {
     try {
-      axios
-        .post(`${baseUrl}/login_with_password`, {
-          phone: removeWhitespaceAndHyphens(mobNo),
-          password: password,
-          token: token,
-        })
-        .then((res: any) => {
-          // console.log('res', res);
-          if (res?.success === true) {
-            setThirdScreen(false);
-            setFourthScreen(true);
-          }
-        });
+      setIsLoading(true);
+      const response = await axios.post(`${baseUrl}/login_with_password`, {
+        phone: removeWhitespaceAndHyphens(mobNo),
+        password: password,
+        token: token,
+      });
+      if (response.data.success === true) {
+        setPasswordErrMsg(false);
+        setThirdScreen(false);
+        setFourthScreen(true);
+      } else {
+        setPasswordErrMsg(true);
+      }
     } catch (err) {
       console.log('error', err);
     } finally {
+      setIsLoading(false);
     }
   };
 
@@ -66,9 +66,22 @@ const ThirdScreen = ({
         <label>{passwordLabel}</label>
         <TextField
           placeholder='Enter password'
-          type='password'
+          type={!showPassword ? 'password' : 'text'}
           size='small'
           onChange={(e: any) => setPassword(e.target.value)}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position='end'>
+                <IconButton
+                  aria-label='toggle password visibility'
+                  onClick={() => setShowPassword(!showPassword)}
+                  edge='end'
+                >
+                  {!showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
         />
 
         <div>
@@ -81,7 +94,7 @@ const ThirdScreen = ({
             disabled={password === ''}
             onClick={handlePassword}
           >
-            Login
+            {isLoading ? 'Loading...' : 'Login'}
           </Button>
         </div>
       </div>

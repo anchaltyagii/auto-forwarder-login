@@ -9,3 +9,21 @@
   color: $errorRed;
   font-size: 11px;
 }
+
+.mobile-display {
+  display: none;
+}
+
+.desktop-display {
+  display: block;
+}
+
+@media screen and (max-width: 550) {
+  .mobile-display {
+    display: block;
+  }
+
+  .desktop-display {
+    display: none;
+  }
+}

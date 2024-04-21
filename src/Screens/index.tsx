@@ -15,6 +15,7 @@ import { useLocation, useSearchParams } from 'react-router-dom';
 import { baseUrl } from '../Services/APIConstant';
 import TokenExpired from '../components/TokenExpired/TokenExpired';
 import Alert from '@mui/material/Alert';
+// import { toast } from 'material-react-toastify';
 
 const Index = () => {
   const [mobNo, setMobNo] = useState('');
@@ -25,45 +26,41 @@ const Index = () => {
   const [thirdScreen, setThirdScreen] = useState(false);
   const [fourthScreen, setFourthScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [tokenExpired, setTokenExpired] = useState(false);
 
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('aageToken');
 
   const handleMobile = async () => {
     if (!mobileNumberValidation(removeWhitespaceAndHyphens(mobNo))) {
       setMobNoErr(true);
     } else {
-      // setInputDisabled(true);
-      // setFirstScreen(false);
-      // setSecondScreen(true);
       try {
         setIsLoading(true);
-        const response = await axios
-          .post(
-            `${baseUrl}/send_login_code/`,
-            {
-              phone: removeWhitespaceAndHyphens(mobNo),
-              token: token,
+        const response = await axios.post(
+          `${baseUrl}/send_login_code/`,
+          {
+            phone: removeWhitespaceAndHyphens(mobNo),
+            token: token,
+          },
+          {
+            headers: {
+              'Access-Control-Allow-Origin': '*',
             },
-            {
-              headers: {
-                'Access-Control-Allow-Origin': '*',
-              },
-            }
-          )
-          .then((res: any) => {
-            // console.log('res data mobile', res.response.data.success);
-            if (res.response.data.success === 200) {
-              setInputDisabled(true);
-              setFirstScreen(false);
-              setSecondScreen(true);
-            } else {
-              console.log('Error', res.response.data.success);
-            }
-          });
-        console.log('response', response);
-      } catch (err) {
-        console.log('error', err);
-        alert(err);
+          }
+        );
+        if (response.status === 200) {
+          setInputDisabled(true);
+          setFirstScreen(false);
+          setSecondScreen(true);
+        } else {
+          console.log('Error:', response.status);
+        }
+      } catch (err: any) {
+        console.log('Error:', err.response.status);
+        if (err.response.status === 403 || err) {
+          setTokenExpired(true);
+          setFirstScreen(false);
+        }
       } finally {
         setIsLoading(false);
       }
@@ -108,7 +105,7 @@ const Index = () => {
 
         {fourthScreen && <FourthScreen />}
 
-        {/* {<TokenExpired />} */}
+        {tokenExpired && <TokenExpired />}
       </Layout>
     </>
   );
