@@ -53,6 +53,7 @@ function App() {
   return (
     <div className='main-container'>
       <Routes>
+        <Route path='/' element={<Screens />} />
         <Route path='/authorize' element={<Screens />} />
       </Routes>
     </div>
